@@ -9,3 +9,5 @@ class User(AbstractUser):
                                 unique=True)
     password = models.CharField(max_length=200, null=False, blank=False,
                                 unique=True)
+    is_verified = models.BooleanField(null=False, blank=False,
+                                      default=False)
