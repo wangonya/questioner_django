@@ -11,8 +11,9 @@ services:
   - postgresql
 
 before_script:
-  - django-admin makemigrations
-  - django-admin migrate
+  - psql -c 'create database questioner;' -U postgres
+  - python manage.py makemigrations
+  - python manage.py migrate
 
 script:
   - pytest --cov=apps/
