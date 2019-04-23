@@ -1,0 +1,20 @@
+language: python
+python:
+  - "3.6"
+install:
+  - pip install -r requirements.txt
+
+addons:
+  postgresql: "9.5"
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database questioner;' -U postgres
+
+script:
+  - pytest --cov=apps/
+
+after_success:
+  - coveralls

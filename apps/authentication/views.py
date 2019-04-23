@@ -37,4 +37,4 @@ class SignupView(views.APIView):
 					"token": token
 					}]
 			}
-		return response.Response(res)
+		return response.Response(res, status.HTTP_201_CREATED)
