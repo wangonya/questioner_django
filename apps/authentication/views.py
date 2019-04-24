@@ -48,8 +48,9 @@ class SignupView(views.APIView):
 class VerifyAccount(views.APIView):
 
 	permission_classes = (permissions.AllowAny,)
-
-	def get(self, request, *args, **kwargs):
+	
+	@staticmethod
+	def get(request, *args, **kwargs):
 		url = request.META['PATH_INFO'] + request.META['QUERY_STRING']
 		token = {'token': url.split('=')[1].rstrip('/')}
 		try:
