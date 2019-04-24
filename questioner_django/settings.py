@@ -140,3 +140,9 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
 	'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 	}
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_USE_TLS = True
