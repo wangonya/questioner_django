@@ -8,7 +8,7 @@ class TestAuth(BaseTestCase):
 		data = {
 			"user":
 				{
-					"email": "test@mail.com",
+					"email": "test2@mail.com",
 					"username": "testuser",
 					"password": "password"
 					}
@@ -42,3 +42,29 @@ class TestAuth(BaseTestCase):
 		res = self.client.get('/auth/verify/&token=invalidtoken3743/')
 
 		assert res.status_code == status.HTTP_400_BAD_REQUEST
+
+	def test_login(self):
+		data = {
+			"user":
+				{
+					"username": "test user",
+					"password": "testpass"
+					}
+			}
+		res = self.client.post(self.login_path, data, format='json')
+
+		# assert res.status_code == status.HTTP_200_OK
+		assert "successful" in res.data['data'][0]['message']
+
+	def test_login_fail(self):
+		data = {
+			"user":
+				{
+					"username": "wronguser",
+					"password": "password"
+					}
+			}
+		res = self.client.post(self.login_path, data, format='json')
+
+		assert res.status_code == status.HTTP_401_UNAUTHORIZED
+		assert "Invalid" in res.data['data'][0]['error']

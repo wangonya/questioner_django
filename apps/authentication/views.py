@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework import (
 	views, response, permissions, status
 	)
@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 
 from common.mail import Mail
 
-from .serializers import SignupSerializer
+from .serializers import SignupSerializer, LoginSerializer
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -45,10 +45,10 @@ class SignupView(views.APIView):
 		return response.Response(res, status.HTTP_201_CREATED)
 
 
-class VerifyAccount(views.APIView):
+class VerifyAccountView(views.APIView):
 
 	permission_classes = (permissions.AllowAny,)
-	
+
 	@staticmethod
 	def get(request, *args, **kwargs):
 		url = request.META['PATH_INFO'] + request.META['QUERY_STRING']
@@ -79,3 +79,40 @@ class VerifyAccount(views.APIView):
 					}]
 				}
 			return response.Response(res, status.HTTP_400_BAD_REQUEST)
+
+
+class LoginView(views.APIView):
+
+	permission_classes = (permissions.AllowAny,)
+	serializer_class = LoginSerializer
+
+	def post(self, request):
+		login_data = request.data.get('user', {})
+		serializer = self.serializer_class(data=login_data)
+		serializer.is_valid(raise_exception=True)
+		user = authenticate(
+			username=login_data['username'],
+			password=login_data['password']
+			)
+
+		if user:
+			payload = jwt_payload_handler(user)
+			token = jwt_encode_handler(payload)
+			res = {
+				"status": status.HTTP_200_OK,
+				"data": [{
+					"message": "Login successful",
+					"email": user.email,
+					"username": user.username,
+					"token": token
+					}]
+				}
+			return response.Response(res, status.HTTP_200_OK)
+		else:
+			res = {
+				"status": status.HTTP_401_UNAUTHORIZED,
+				"data": [{
+					"error": "Invalid login details"
+					}]
+				}
+			return response.Response(res, status.HTTP_401_UNAUTHORIZED)
