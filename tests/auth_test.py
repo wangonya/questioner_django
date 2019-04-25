@@ -53,7 +53,7 @@ class TestAuth(BaseTestCase):
 			}
 		res = self.client.post(self.login_path, data, format='json')
 
-		# assert res.status_code == status.HTTP_200_OK
+		assert res.status_code == status.HTTP_200_OK
 		assert "successful" in res.data['data'][0]['message']
 
 	def test_login_fail(self):
@@ -68,3 +68,52 @@ class TestAuth(BaseTestCase):
 
 		assert res.status_code == status.HTTP_401_UNAUTHORIZED
 		assert "Invalid" in res.data['data'][0]['error']
+
+	def test_forgot_password(self):
+		data = {
+			"user":
+				{
+					"email": "test@mail.com",
+					}
+			}
+		res = self.client.post(self.forgot_password_path, data, format='json')
+
+		assert res.status_code == status.HTTP_200_OK
+		assert "link sent" in res.data['data'][0]['message']
+
+	def test_forgot_password_invalid(self):
+		data = {
+			"user":
+				{
+					"email": "non-existent@mail.com",
+					}
+			}
+		res = self.client.post(self.forgot_password_path, data, format='json')
+
+		assert res.status_code == status.HTTP_400_BAD_REQUEST
+		assert "No account with that email" in res.data['data'][0]['error']
+
+	def test_reset_password(self):
+		data = {
+			"user":
+				{
+					"password": "newtestpass",
+					}
+			}
+		res = self.client.patch(self.reset_password_path, data,
+		                       format='json')
+
+		assert res.status_code == status.HTTP_200_OK
+		assert "reset successful" in res.data['data'][0]['message']
+
+	def test_reset_password_invalid(self):
+		data = {
+			"user":
+				{
+					"password": "newtestpass",
+					}
+			}
+		res = self.client.patch('/auth/reset/token=wrong.token123/', data,
+		                       format='json')
+
+		assert res.status_code == status.HTTP_401_UNAUTHORIZED
