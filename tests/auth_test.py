@@ -76,10 +76,13 @@ class TestAuth(BaseTestCase):
 					"email": "test@mail.com",
 					}
 			}
-		res = self.client.post(self.forgot_password_path, data, format='json')
+		with self.settings(
+				EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+				):
+			res = self.client.post(self.forgot_password_path, data, format='json')
 
-		assert res.status_code == status.HTTP_200_OK
-		assert "link sent" in res.data['data'][0]['message']
+			assert res.status_code == status.HTTP_200_OK
+			assert "link sent" in res.data['data'][0]['message']
 
 	def test_forgot_password_invalid(self):
 		data = {
