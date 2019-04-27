@@ -45,3 +45,6 @@ class BaseTestCase(APITestCase):
 			})
 
 		self.create_meetup_path = reverse('meetup:create')
+		self.upcoming_meetups_path = reverse('meetup:upcoming')
+		self.specific_meetup_path = reverse('meetup:specific', kwargs={
+			'pk': 1})

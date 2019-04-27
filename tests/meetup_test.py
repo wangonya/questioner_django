@@ -1,7 +1,6 @@
 import cloudinary
 
 from rest_framework.views import status
-from rest_framework_jwt import utils
 
 from tests import BaseTestCase
 
@@ -65,3 +64,10 @@ class TestMeetup(BaseTestCase):
 		                       format='json')
 
 		assert res.status_code == status.HTTP_201_CREATED
+
+	def test_get_meetups(self):
+		res = self.client.get(self.upcoming_meetups_path)
+		assert res.status_code == status.HTTP_200_OK
+
+		res = self.client.get(self.specific_meetup_path)
+		assert res.status_code == status.HTTP_200_OK
