@@ -40,8 +40,10 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 
 	'apps.authentication',
+	'apps.meetup',
 
-	'rest_framework'
+	'rest_framework',
+	'cloudinary',
 	]
 
 MIDDLEWARE = [
@@ -146,3 +148,9 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_USE_TLS = True
+
+CLOUDINARY = {
+	'cloud_name': 'kwangonya',
+	'api_key': '896213827437316',
+	'api_secret': 'Xf11K0YRzPfx27MOvphCW4Ie9d0',
+}

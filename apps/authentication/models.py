@@ -7,7 +7,6 @@ class User(AbstractUser):
     email = models.EmailField(null=False, blank=False, unique=True)
     username = models.CharField(max_length=15, null=False, blank=False,
                                 unique=True)
-    password = models.CharField(max_length=200, null=False, blank=False,
-                                unique=True)
+    password = models.CharField(max_length=200, null=False, blank=False)
     is_verified = models.BooleanField(null=False, blank=False,
                                       default=False)
