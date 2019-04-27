@@ -14,11 +14,21 @@ User = get_user_model()
 class BaseTestCase(APITestCase):
 	def setUp(self):
 		self.client = APIClient()
+
 		self.test_user = User.objects.create_user('test user',
 		                                          'test@mail.com',
 		                                          'testpass')
 		self.payload = utils.jwt_payload_handler(self.test_user)
 		self.token = utils.jwt_encode_handler(self.payload)
+		self.auth = 'JWT {0}'.format(self.token)
+
+		self.test_super_user = User.objects.create_superuser('super user',
+		                                                     'super@mail.com',
+		                                                     'supertestpass')
+		self.superpayload = utils.jwt_payload_handler(self.test_super_user)
+		self.supertoken = utils.jwt_encode_handler(self.superpayload)
+		self.super_auth = 'JWT {0}'.format(self.supertoken)
+
 		self.reset_password_token = jwt.encode({
 				'email': 'test@mail.com',
 				'type': 'reset password',
@@ -33,3 +43,5 @@ class BaseTestCase(APITestCase):
 		self.reset_password_path = reverse('authentication:reset', kwargs={
 			'token': 'token={}'.format(self.reset_password_token)
 			})
+
+		self.create_meetup_path = reverse('meetup:create')
