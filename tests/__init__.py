@@ -45,3 +45,4 @@ class BaseTestCase(APITestCase):
 			})
 
 		self.create_meetup_path = reverse('meetup:create')
+		self.upcoming_meetups_path = reverse('meetup:upcoming')

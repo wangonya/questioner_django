@@ -1,7 +1,6 @@
 import cloudinary
 
 from rest_framework.views import status
-from rest_framework_jwt import utils
 
 from tests import BaseTestCase
 
@@ -14,7 +13,7 @@ class TestMeetup(BaseTestCase):
 		assert res.status_code == status.HTTP_401_UNAUTHORIZED
 		assert "restricted to admins" in res.data['error']
 
-	def test_create_meetup(self):
+	def test_meetups(self):
 		data = {
 			"meetup": {
 				"title": "dsfsmmmf",
@@ -50,6 +49,7 @@ class TestMeetup(BaseTestCase):
 		res = self.client.post(self.create_meetup_path, data,
 		                       HTTP_AUTHORIZATION=self.super_auth,
 		                       format='json')
+		meetup_id = res.data['data'][0]['id']
 
 		assert res.status_code == status.HTTP_201_CREATED
 		cloudinary.uploader.destroy('ah-django/dsfsmmmf')
@@ -65,3 +65,9 @@ class TestMeetup(BaseTestCase):
 		                       format='json')
 
 		assert res.status_code == status.HTTP_201_CREATED
+
+		res = self.client.get(self.upcoming_meetups_path)
+		assert res.status_code == status.HTTP_200_OK
+
+		res = self.client.get('/meetups/{}'.format(meetup_id))
+		assert res.status_code == status.HTTP_200_OK

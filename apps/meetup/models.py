@@ -11,3 +11,6 @@ class MeetupModel(models.Model):
 	tags = ArrayField(
 		models.CharField(max_length=100), blank=True, null=True
 	)
+
+	class Meta:
+		ordering = ["happening_on"]

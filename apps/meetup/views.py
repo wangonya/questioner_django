@@ -3,11 +3,13 @@ import imghdr
 
 from pathlib import Path
 from rest_framework import (
-	views, response, permissions, status
+	views, response, permissions, status,
+	generics
 	)
 from django.template.defaultfilters import slugify
 
 from .serializers import (MeetupSerializer, )
+from .models import MeetupModel
 
 
 class CreateMeetupView(views.APIView):
@@ -44,3 +46,20 @@ class CreateMeetupView(views.APIView):
 			"data": [serializer.data]
 			}
 		return response.Response(res, status.HTTP_201_CREATED)
+
+
+class UpcomingMeetupsView(generics.ListAPIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = MeetupSerializer
+	queryset = MeetupModel.objects.all()
+
+
+class SpecificMeetupView(generics.RetrieveAPIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = MeetupSerializer
+	queryset = MeetupModel.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		return self.retrieve(request, *args, **kwargs)
+
+# TODO: ADD FILTERING BY TAG
