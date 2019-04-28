@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.contenttypes.fields import GenericRelation
+
+from apps.authentication.models import User
 
 
 class MeetupModel(models.Model):
@@ -14,3 +17,18 @@ class MeetupModel(models.Model):
 
 	class Meta:
 		ordering = ["happening_on"]
+
+
+class QuestionModel(models.Model):
+	question = models.TextField(null=False, blank=False)
+	asked_on = models.DateTimeField(auto_now_add=True)
+	asked_by = models.ForeignKey(User, on_delete=models.CASCADE)
+	for_meetup = models.ForeignKey(MeetupModel, on_delete=models.CASCADE)
+	votes = GenericRelation('VotesModel', related_query_name='question')
+
+	class Meta:
+		ordering = ["asked_on"]
+
+
+class VotesModel(models.Model):
+	pass
