@@ -8,8 +8,9 @@ from rest_framework import (
 	)
 from django.template.defaultfilters import slugify
 
-from .serializers import (MeetupSerializer, QuestionSerializer)
-from .models import (MeetupModel, QuestionModel)
+from .serializers import (MeetupSerializer, QuestionSerializer,
+                          VotesSerializer)
+from .models import (MeetupModel, QuestionModel, VotesModel)
 
 
 class CreateMeetupView(views.APIView):
@@ -99,3 +100,39 @@ class GetMeetupQuestionsView(generics.ListAPIView):
 		self.queryset = QuestionModel.objects.filter(
 			for_meetup_id=kwargs['for_meetup_id'])
 		return self.list(request, *args, **kwargs)
+
+
+class VoteView(views.APIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = VotesSerializer
+
+	def post(self, request, pk):
+		vote_data = request.data.get('vote', {})
+		vote_data['voter'] = request.user.id
+		try:
+			vote_data['for_question'] = QuestionModel.objects.get(pk=pk).id
+		except QuestionModel.DoesNotExist:
+			return response.Response({"error": "no question with id {}"
+			                         .format(pk)},
+			                         status=status.HTTP_404_NOT_FOUND)
+		serializer = self.serializer_class(data=vote_data)
+		serializer.is_valid(raise_exception=True)
+
+		check_if_voted = VotesModel.objects.filter(
+			voter=vote_data['voter'],
+			for_question=vote_data['for_question'])
+
+		if check_if_voted.exists():
+			check_if_voted.delete()
+			res = {
+				"status": status.HTTP_200_OK,
+				"detail": "vote removed"
+				}
+			return response.Response(res, status.HTTP_200_OK)
+		else:
+			serializer.save()
+			res = {
+				"status": status.HTTP_201_CREATED,
+				"data": [serializer.data]
+				}
+			return response.Response(res, status.HTTP_201_CREATED)

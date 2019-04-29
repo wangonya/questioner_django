@@ -31,4 +31,6 @@ class QuestionModel(models.Model):
 
 
 class VotesModel(models.Model):
-	pass
+	vote = models.SmallIntegerField(null=False, blank=False)
+	for_question = models.ForeignKey(QuestionModel, on_delete=models.CASCADE)
+	voter = models.ForeignKey(User, on_delete=models.CASCADE)

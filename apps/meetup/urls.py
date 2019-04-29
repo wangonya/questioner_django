@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (CreateMeetupView, UpcomingMeetupsView,
                     SpecificMeetupView, AskQuestionView,
-                    GetMeetupQuestionsView)
+                    GetMeetupQuestionsView, VoteView)
 
 urlpatterns = [
 	path('', CreateMeetupView.as_view(), name='create'),
@@ -12,4 +12,5 @@ urlpatterns = [
 	     name='ask-questions'),
 	path('<for_meetup_id>/questions/get/', GetMeetupQuestionsView.as_view(),
 	     name='get-questions'),
+	path('questions/<pk>/vote/', VoteView.as_view(), name='vote'),
 	]
