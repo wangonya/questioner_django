@@ -1,13 +1,9 @@
 import os
-import smtplib
 
 from django.core.mail import send_mail
 
 
 class Mail:
-	server = smtplib.SMTP('smtp.gmail.com')
-	server.starttls()
-	server.login(os.getenv('EMAIL_HOST_USER'), os.getenv('EMAIL_HOST_PASSWORD'))
 	@staticmethod
 	def send_verification_mail(email, token):
 		send_mail(
