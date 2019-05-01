@@ -15,11 +15,13 @@ class QuestionSerializer(serializers.ModelSerializer):
 		model = QuestionModel
 		fields = '__all__'
 
-	def get_upvotes(self, inst):
+	@staticmethod
+	def get_upvotes(inst):
 		upvote_queryset = VotesModel.objects.filter(for_question=inst, vote=1)
 		return upvote_queryset.count()
 
-	def get_downvotes(self, inst):
+	@staticmethod
+	def get_downvotes(inst):
 		downvote_queryset = VotesModel.objects.filter(for_question=inst, vote=-1)
 		return downvote_queryset.count()
 
