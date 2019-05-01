@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import MeetupModel, QuestionModel, VotesModel
+from .models import (MeetupModel, QuestionModel, VotesModel,
+                     AnswerModel)
 
 
 class MeetupSerializer(serializers.ModelSerializer):
@@ -29,4 +30,10 @@ class QuestionSerializer(serializers.ModelSerializer):
 class VotesSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = VotesModel
+		fields = '__all__'
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = AnswerModel
 		fields = '__all__'
