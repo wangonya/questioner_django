@@ -99,8 +99,7 @@ class GetMeetupQuestionsView(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		self.queryset = QuestionModel.objects.filter(
 			for_meetup_id=kwargs['for_meetup_id'])
-		data = {"testdata": "ok"}
-		return self.list(request, data, *args, **kwargs)
+		return self.list(request, *args, **kwargs)
 
 
 class SpecificQuestionView(generics.RetrieveAPIView):

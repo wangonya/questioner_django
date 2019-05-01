@@ -105,6 +105,9 @@ class TestMeetup(BaseTestCase):
 			format='json')
 		assert res.status_code == status.HTTP_200_OK
 
+		res = self.client.get('/meetups/questions/{}/'.format(question_id))
+		assert res.status_code == status.HTTP_200_OK
+
 		res = self.client.post('/meetups/questions/00/vote/', vote,
 		                       HTTP_AUTHORIZATION=self.auth, format='json')
 		assert res.status_code == status.HTTP_404_NOT_FOUND
