@@ -34,3 +34,10 @@ class VotesModel(models.Model):
 	vote = models.SmallIntegerField(null=False, blank=False)
 	for_question = models.ForeignKey(QuestionModel, on_delete=models.CASCADE)
 	voter = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class AnswerModel(models.Model):
+	answer = models.TextField(null=False, blank=False)
+	answered_on = models.DateTimeField(auto_now_add=True)
+	answered_by = models.ForeignKey(User, on_delete=models.CASCADE)
+	for_question = models.ForeignKey(QuestionModel, on_delete=models.CASCADE)

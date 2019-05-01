@@ -111,3 +111,19 @@ class TestMeetup(BaseTestCase):
 		res = self.client.post('/meetups/questions/00/vote/', vote,
 		                       HTTP_AUTHORIZATION=self.auth, format='json')
 		assert res.status_code == status.HTTP_404_NOT_FOUND
+
+		answer = {
+			"answer": {"answer": -1}
+		}
+
+		res = self.client.post('/meetups/questions/{}/answer/'.format(
+			question_id), answer, HTTP_AUTHORIZATION=self.auth,
+			format='json')
+		assert res.status_code == status.HTTP_201_CREATED
+
+		res = self.client.post('/meetups/questions/00/answer/',
+		                       answer, HTTP_AUTHORIZATION=self.auth, format='json')
+		assert res.status_code == status.HTTP_404_NOT_FOUND
+
+		res = self.client.get('/meetups/questions/{}/answers/'.format(question_id))
+		assert res.status_code == status.HTTP_200_OK

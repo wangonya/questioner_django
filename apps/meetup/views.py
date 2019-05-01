@@ -9,8 +9,9 @@ from rest_framework import (
 from django.template.defaultfilters import slugify
 
 from .serializers import (MeetupSerializer, QuestionSerializer,
-                          VotesSerializer)
-from .models import (MeetupModel, QuestionModel, VotesModel)
+                          VotesSerializer, AnswerSerializer)
+from .models import (MeetupModel, QuestionModel, VotesModel,
+                     AnswerModel)
 
 
 class CreateMeetupView(views.APIView):
@@ -88,6 +89,42 @@ class AskQuestionView(views.APIView):
 			"data": [serializer.data]
 			}
 		return response.Response(res, status.HTTP_201_CREATED)
+
+
+class AnswerQuestionView(views.APIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = AnswerSerializer
+
+	def post(self, request, pk):
+		answer_data = request.data.get('answer', {})
+		answer_data['answered_by'] = request.user.id
+		try:
+			answer_data['for_question'] = QuestionModel.objects.get(pk=pk).id
+		except QuestionModel.DoesNotExist:
+			return response.Response({"error": "no question with id {}"
+			                         .format(pk)},
+			                         status=status.HTTP_404_NOT_FOUND)
+		serializer = self.serializer_class(data=answer_data)
+		serializer.is_valid(raise_exception=True)
+
+		serializer.save()
+		res = {
+			"status": status.HTTP_201_CREATED,
+			"data": [serializer.data]
+			}
+		return response.Response(res, status.HTTP_201_CREATED)
+
+
+class GetQuestionAnswersView(generics.ListAPIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = AnswerSerializer
+	queryset = AnswerModel.objects.all()
+	lookup_field = 'for_question_id'
+
+	def get(self, request, *args, **kwargs):
+		self.queryset = AnswerModel.objects.filter(
+			for_question_id=kwargs['for_question_id'])
+		return self.list(request, *args, **kwargs)
 
 
 class GetMeetupQuestionsView(generics.ListAPIView):
