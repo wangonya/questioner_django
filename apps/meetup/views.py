@@ -99,7 +99,17 @@ class GetMeetupQuestionsView(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		self.queryset = QuestionModel.objects.filter(
 			for_meetup_id=kwargs['for_meetup_id'])
-		return self.list(request, *args, **kwargs)
+		data = {"testdata": "ok"}
+		return self.list(request, data, *args, **kwargs)
+
+
+class SpecificQuestionView(generics.RetrieveAPIView):
+	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+	serializer_class = QuestionSerializer
+	queryset = QuestionModel.objects.all()
+
+	def get(self, request, *args, **kwargs):
+		return self.retrieve(request, *args, **kwargs)
 
 
 class VoteView(views.APIView):
